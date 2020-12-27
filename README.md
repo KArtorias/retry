@@ -8,7 +8,8 @@ go get github.com/KArtorias/retry
 ```
 retryTimes: 重试次数
 retryTimeout: 重试超时时间，传0表示不设置重试超时
-sleepTime: 重试前等待时间，传0表示本次重试失败后立即开启下一次重试
+waitTime: 重试前等待时间，传0表示本次重试失败后立即开启下一次重试
+funcName: 重试函数信息
 f func()error: 函数主体，即重试执行内容
 ```
 

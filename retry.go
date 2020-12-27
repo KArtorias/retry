@@ -11,14 +11,14 @@ var (
 	retryTimeoutError = errors.New("retry timeout")
 )
 
-func DoFunc(retryTimes uint, retryTimeout, sleepTime time.Duration, f func() error) error {
+func DoFunc(retryTimes uint, retryTimeout, waitTime time.Duration, funcName string, f func() error) error {
 	if retryTimes == 0 {
-		log.Printf("ERROE: %v\n", retryTimesError)
+		log.Printf("ERROE: [%s] %v\n", funcName, retryTimesError)
 		return retryTimesError
 	}
 	for i := uint(1); i <= retryTimes; i++ {
-		if i > 1 && sleepTime > 0 {
-			time.Sleep(sleepTime)
+		if i > 1 && waitTime > 0 {
+			time.Sleep(waitTime)
 		}
 		var err error
 		ch1 := make(chan int)
@@ -37,14 +37,14 @@ func DoFunc(retryTimes uint, retryTimeout, sleepTime time.Duration, f func() err
 		}()
 		select {
 		case <-ch1:
-			log.Printf("ERROE: retry %d times error: %v\n", i, retryTimeoutError)
+			log.Printf("ERROE: [%s] retry %d times error: %v\n", funcName, i, retryTimeoutError)
 			if i == retryTimes {
 				return retryTimeoutError
 			}
 			continue
 		case <-ch2:
 			if err != nil {
-				log.Printf("ERROE: retry %d times error: %v\n", i, err)
+				log.Printf("ERROE: [%s] retry %d times error: %v\n", funcName, i, err)
 				if i == retryTimes {
 					return err
 				}
